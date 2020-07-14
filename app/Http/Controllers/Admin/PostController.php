@@ -29,6 +29,17 @@ class PostController extends Controller
         ]);
         $dati = $request->all();
         $slug = Str::of($dati['title'])->slug('-');
+        $slug_originale = $slug;
+        $post_trovato = Post::where('slug', $slug)->first();
+        $contatore = 0;
+        //ciclo finchè la where non restituisce NULL
+        while($post_trovato) {
+            $contatore++;
+            //creo un nuovo slug grazie a un contatore
+            $slug = $slug_originale . '-' . $contatore;
+            $post_trovato = Post::where('slug', $slug)->first();
+        }
+        //slug unico
         $dati['slug'] = $slug;
         $nuovo_post = new Post();
         $nuovo_post->fill($dati);
